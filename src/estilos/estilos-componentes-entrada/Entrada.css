@@ -1,0 +1,8 @@
+.Entrada {
+    width: 400px;
+    padding: 7px 10px;
+}
+
+.Entrada::placeholder {
+    color: #ccc;
+}
