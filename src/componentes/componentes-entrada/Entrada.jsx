@@ -1,41 +1,46 @@
-import { useState } from 'react'
+import { useContext, useRef } from 'react'
+import { useAgregarOpcionContext } from '../../ProviderOpciones/ProviderOpciones'
+
 
 import '../../estilos/estilos-componentes-entrada/Entrada.css'
 
-export function Entrada ({escucharEnter}) {
+export function Entrada () {
 
-    
-    const [nuevaOpcion, setNuevaOpcion] = useState({});
+    const inputRef = useRef(null);
+    const agregarOpcion = useContext(useAgregarOpcionContext());
 
-    const colorAleatorio = () => {
-        let simbolos, color;
-	    simbolos = "0123456789ABCDEF";
-	    color = "#";
-
-	    for(var i = 0; i < 6; i++){
-		    color = color + simbolos[Math.floor(Math.random() * 16)];
-	    }
-
-        return color;
+    const escucharEnter = (e)=> {
+        if (e.key === 'Enter') {
+            const valorInput = inputRef.current.value
+            const nuevaOpcion = { option: valorInput, style: { backgroundColor: '', textColor: '#fff' } };
+            if (valorInput !== '') {
+                nuevaOpcion.style.backgroundColor = generarNuevoColor();
+                agregarOpcion(nuevaOpcion);
+                inputRef.current.value = '';
+            } 
+        }
+        
     }
 
-    const manejarCambios = (e)=> {
-        setNuevaOpcion({option: (e.target.value), style: { backgroundColor: colorAleatorio() , textColor: '#000'}});
+    function generarNuevoColor() {
+        var simbolos, color;
+        simbolos = "0123456789ABCDEF";
+        color = "#";
+    
+        for(var i = 0; i < 6; i++){
+            color = color + simbolos[Math.floor(Math.random() * 16)];
+        }
+    
+        return color;
     }
 
     return (
         <input 
+            ref={inputRef}
             className='Entrada' 
             type='text' 
             placeholder='Agrega una opción'
-            onChange={(e)=>manejarCambios(e)}
-            onKeyUp={(e)=>{
-                if (e.key === 'Enter' && e.target.value !== '') {
-                    escucharEnter(nuevaOpcion);
-                    setNuevaOpcion({});
-                    e.target.value = "";
-                }
-            }}
+            onKeyUp={(e)=>escucharEnter(e)}            
         />
     )
 }
