@@ -1,42 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import { Wheel } from 'react-custom-roulette'
+import { useOpcionesContext } from '../../ProviderOpciones/ProviderOpciones';
 
 import '../../estilos/estilos-componentes-ruleta/Ruleta.css'
 
-export function Ruleta ({nuevaOpcion, enviarOpciones, opcionesActuales, obtenerGanador}) {
+export function Ruleta () {
 
     //Estados
     const [mustSpin, setMustSpin] = useState(false);
     const [ganador, setGanador] = useState(0);
-    const [opciones, setOpciones] = useState([{}]);
-
     
-    useEffect(() => {
-        if (nuevaOpcion.option !== '') {
-          setOpciones(prevEstado => {
-            if (Object.keys(prevEstado[0]).length === 0) return [nuevaOpcion];
-            else return [...prevEstado, nuevaOpcion];
-          });
-      }
-    }, [nuevaOpcion]);
-  
-    
-    useEffect(()=>{
-      if (opcionesActuales !== opciones) {
-        if (Object.keys(opcionesActuales[0]).length === 0) {
-          setOpciones([{}])
-        } else {
-          setOpciones(opcionesActuales)
-        }
-      }
-    }, [opcionesActuales])
-
-  enviarOpciones(opciones)
+    const opciones = useContext(useOpcionesContext());
 
   const manejarClick = () => {
         if (!mustSpin) {
         const nuevoGanador = Math.floor(Math.random() * opciones.length);
-        obtenerGanador(opciones[nuevoGanador].option)
         setGanador(nuevoGanador);
         setMustSpin(true);
         }
@@ -53,7 +31,7 @@ export function Ruleta ({nuevaOpcion, enviarOpciones, opcionesActuales, obtenerG
         outerBorderWidth={7}
         mustStartSpinning={mustSpin}
         prizeNumber={ganador}
-        data={opciones}
+        data={(opciones.length === 0) ? [{}] : opciones}
         disableInitialAnimation={true}
 
         onStopSpinning={() => {
